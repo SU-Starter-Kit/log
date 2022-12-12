@@ -9,9 +9,9 @@ import (
 )
 
 func ExampleNewBuilder_Logger_WithoutCorrlationId() {
-	loggr := logger.NewBuilder(). // creates a new builder with defaults
-					WithLogFlags(0). // removes log flags to assert output
-					Build()          // builds the logger
+	loggr, _ := logger.New(
+		logger.WithLogFlags(0), // removes log flags to assert output
+	)
 
 	loggr.Debug(messages.New("").WithCorrelationId("2323424").WithMessage("this is a log").Message()) // defining message with `WithMessage`
 	loggr.Debug(messages.New("this is a log").WithCorrelationId("2323424").Message())
@@ -22,10 +22,10 @@ func ExampleNewBuilder_Logger_WithoutCorrlationId() {
 }
 
 func ExampleNewBuilder_Logger_WithCorrelationId() {
-	loggr := logger.NewBuilder(). // creates a new builder with defaults
-					WithLogFlags(0).              // removes log flags to assert output
-					WithCorrelationId("2323424"). // setting correlation id so we expect the same result as Example above
-					Build()                       // builds the logger.
+	loggr, _ := logger.New(
+		logger.WithLogFlags(0),              // removes log flags to assert output
+		logger.WithCorrelationid("2323424"), // setting correlation id so we expect the same result as Example above
+	)
 
 	loggr.Debug(messages.New("").WithMessage("this is a log").Message())
 
@@ -34,10 +34,10 @@ func ExampleNewBuilder_Logger_WithCorrelationId() {
 }
 
 func ExampleLogMessage_With_Tags() {
-	loggr := logger.NewBuilder(). // creates a new builder with defaults
-					WithLogFlags(0).              // removes log flags to assert output
-					WithCorrelationId("2323424"). // setting correlation id
-					Build()                       // builds the logger.
+	loggr, _ := logger.New(
+		logger.WithLogFlags(0),              // removes log flags to assert output
+		logger.WithCorrelationid("2323424"), // setting correlation id
+	)
 
 	loggr.Debug(messages.New("this is a log").WithTag("key", "val").Message())
 
@@ -46,10 +46,11 @@ func ExampleLogMessage_With_Tags() {
 }
 
 func ExampleLogMessage_WithShortAlias() {
-	loggr := logger.NewBuilder(). // creates a new builder with defaults
-					WithLogFlags(0).              // removes log flags to assert output
-					WithCorrelationId("2323424"). // setting correlation id
-					Build()                       // builds the logger.
+
+	loggr, _ := logger.New(
+		logger.WithLogFlags(0),              // removes log flags to assert output
+		logger.WithCorrelationid("2323424"), // setting correlation id
+	)
 
 	loggr.Warn(&messages.M{Message: "this is a log"})
 
@@ -58,10 +59,10 @@ func ExampleLogMessage_WithShortAlias() {
 }
 
 func ExampleLogError() {
-	loggr := logger.NewBuilder(). // creates a new builder with defaults
-					WithLogFlags(0).              // removes log flags to assert output
-					WithCorrelationId("2323424"). // setting correlation id
-					Build()                       // builds the logger.
+	loggr, _ := logger.New(
+		logger.WithLogFlags(0),              // removes log flags to assert output
+		logger.WithCorrelationid("2323424"), // setting correlation id
+	)
 
 	loggr.Error(messages.New("this is a log").WithError(fmt.Errorf("this is an error")).Message())
 
