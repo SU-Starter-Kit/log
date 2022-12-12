@@ -16,54 +16,41 @@ func (lm *LogMessage) AsJson() string {
 	return string(b)
 }
 
-// LogMessageBuilder
-//
-// To provide a fluent interface for building company log message.
-type LogMessageBuilder struct {
-	companyLog *LogMessage
-}
+type logMessageOption func(lm *LogMessage)
 
 // New
 //
 // # Returns a new LogMessageBuilder
 //
 // @param logMessage can be changed later using `WithMessage` method.
-func New(logMessage string) *LogMessageBuilder {
-	return &LogMessageBuilder{
-		companyLog: &LogMessage{
-			Message: logMessage,
-			Tags:    make(map[string]string),
-		},
+func New(logMessage string, opts ...logMessageOption) *LogMessage {
+	// Sets default log message
+	msg := &LogMessage{
+		Message: logMessage,
+		Tags:    make(map[string]string),
+	}
+
+	for _, opt := range opts {
+		opt(msg)
+	}
+
+	return msg
+}
+
+func WithCorrelationId(correlationId string) logMessageOption {
+	return func(msg *LogMessage) {
+		msg.CorrelationId = correlationId
 	}
 }
 
-func (clb *LogMessageBuilder) WithCorrelationId(correlationId string) *LogMessageBuilder {
-	clb.companyLog.CorrelationId = correlationId
-	return clb
+func WithTag(key, value string) logMessageOption {
+	return func(msg *LogMessage) {
+		msg.Tags[key] = value
+	}
 }
 
-func (clb *LogMessageBuilder) WithMessage(message string) *LogMessageBuilder {
-	clb.companyLog.Message = message
-	return clb
-}
-
-func (clb *LogMessageBuilder) WithTag(key, value string) *LogMessageBuilder {
-	clb.companyLog.Tags[key] = value
-	return clb
-}
-
-func (clb *LogMessageBuilder) WithError(err error) *LogMessageBuilder {
-	clb.companyLog.Err = err.Error()
-	return clb
-}
-
-// Build
-//
-// Builds LogMessage required by company logger.
-func (clb *LogMessageBuilder) Message() *LogMessage {
-	return clb.companyLog
-}
-
-func (clb *LogMessageBuilder) JsonMessage() string {
-	return clb.Message().AsJson()
+func WithError(err error) logMessageOption {
+	return func(msg *LogMessage) {
+		msg.Err = err.Error()
+	}
 }

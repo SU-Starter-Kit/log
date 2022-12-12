@@ -13,8 +13,16 @@ func ExampleNewBuilder_Logger_WithoutCorrlationId() {
 		logger.WithLogFlags(0), // removes log flags to assert output
 	)
 
-	loggr.Debug(messages.New("").WithCorrelationId("2323424").WithMessage("this is a log").Message()) // defining message with `WithMessage`
-	loggr.Debug(messages.New("this is a log").WithCorrelationId("2323424").Message())
+	loggr.Debug(
+		messages.New("this is a log",
+			messages.WithCorrelationId("2323424"),
+		),
+	) // defining message with `WithMessage`
+	loggr.Debug(
+		messages.New("this is a log",
+			messages.WithCorrelationId("2323424"),
+		),
+	)
 
 	// Output:
 	// [DEBUG]{"correlation_id":"2323424","message":"this is a log"}
@@ -27,7 +35,11 @@ func ExampleNewBuilder_Logger_WithCorrelationId() {
 		logger.WithCorrelationid("2323424"), // setting correlation id so we expect the same result as Example above
 	)
 
-	loggr.Debug(messages.New("").WithMessage("this is a log").Message())
+	loggr.Debug(
+		messages.New(
+			"this is a log",
+		),
+	)
 
 	// Output:
 	// [DEBUG]{"correlation_id":"2323424","message":"this is a log"}
@@ -39,7 +51,12 @@ func ExampleLogMessage_With_Tags() {
 		logger.WithCorrelationid("2323424"), // setting correlation id
 	)
 
-	loggr.Debug(messages.New("this is a log").WithTag("key", "val").Message())
+	loggr.Debug(
+		messages.New(
+			"this is a log",
+			messages.WithTag("key", "val"),
+		),
+	)
 
 	// Output:
 	// [DEBUG]{"correlation_id":"2323424","message":"this is a log","tags":{"key":"val"}}
@@ -64,7 +81,11 @@ func ExampleLogError() {
 		logger.WithCorrelationid("2323424"), // setting correlation id
 	)
 
-	loggr.Error(messages.New("this is a log").WithError(fmt.Errorf("this is an error")).Message())
+	loggr.Error(messages.New(
+		"this is a log",
+		messages.WithError(fmt.Errorf("this is an error")),
+	),
+	)
 
 	// Output:
 	// [ERROR]{"correlation_id":"2323424","message":"this is a log","error":"this is an error"}
